@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { FiTrendingUp, FiZap, FiClock } from 'react-icons/fi';
 import AIResultDisplay from '../components/AIResultDisplay';
+import Pagination from '../components/Pagination';
 
 const authHeader = () => ({ 'Authorization': 'Bearer ' + localStorage.getItem('token') });
 const jsonHeaders = () => ({ 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + localStorage.getItem('token') });
@@ -29,17 +30,19 @@ export default function AITrafficAnalyzer() {
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState(null);
   const [history, setHistory] = useState([]);
+  const [pagination, setPagination] = useState({});
+  const [histPage, setHistPage] = useState(1);
   const [error, setError] = useState('');
   const [selectedHistory, setSelectedHistory] = useState(null);
 
-  const fetchHistory = async () => {
+  const fetchHistory = async (p = histPage) => {
     try {
-      const res = await fetch('/api/ai/analyses?type=traffic-analyzer', { headers: authHeader() });
-      if (res.ok) { const data = await res.json(); setHistory(Array.isArray(data) ? data : []); }
+      const res = await fetch(`/api/ai/analyses?type=traffic-analyzer&page=${p}&limit=10`, { headers: authHeader() });
+      if (res.ok) { const data = await res.json(); setHistory(Array.isArray(data.data) ? data.data : []); setPagination(data.pagination || {}); }
     } catch (e) { console.error(e); }
   };
 
-  useEffect(() => { fetchHistory(); }, []);
+  useEffect(() => { fetchHistory(histPage); }, [histPage]);
 
   const handleAnalyze = async () => {
     if (!input.trim()) return;
@@ -117,15 +120,18 @@ export default function AITrafficAnalyzer() {
         {history.length === 0 ? (
           <p style={{ color: 'var(--text-muted)', fontSize: '14px' }}>No previous analyses found.</p>
         ) : (
-          history.map((item, i) => (
-            <div key={item._id || i} className="ai-history-item" onClick={() => setSelectedHistory(item)}>
-              <div className="history-meta">
-                <span>{item.type || 'Traffic Analysis'}</span>
-                <span>{item.createdAt ? new Date(item.createdAt).toLocaleString() : ''}</span>
+          <>
+            {history.map((item, i) => (
+              <div key={item._id || i} className="ai-history-item" onClick={() => setSelectedHistory(item)}>
+                <div className="history-meta">
+                  <span>{item.type || 'Traffic Analysis'}</span>
+                  <span>{item.createdAt ? new Date(item.createdAt).toLocaleString() : ''}</span>
+                </div>
+                <div className="history-preview">{item.input || item.query || 'Analysis result'}</div>
               </div>
-              <div className="history-preview">{item.input || item.query || 'Analysis result'}</div>
-            </div>
-          ))
+            ))}
+            <Pagination page={histPage} totalPages={pagination.totalPages} total={pagination.total} limit={pagination.limit || 10} onPageChange={setHistPage} />
+          </>
         )}
       </div>
     </div>

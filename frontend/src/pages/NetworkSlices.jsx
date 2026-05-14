@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { FiPlus, FiSearch, FiLayers } from 'react-icons/fi';
 import DetailModal from '../components/DetailModal';
+import Pagination from '../components/Pagination';
 
 const API_URL = '/api/network-slices';
 const headers = () => ({
@@ -28,16 +29,23 @@ export default function NetworkSlices() {
   const [showAdd, setShowAdd] = useState(false);
   const [formData, setFormData] = useState({});
   const [error, setError] = useState('');
+  const [page, setPage] = useState(1);
+  const [pagination, setPagination] = useState({});
 
-  const fetchData = async () => {
+  const fetchData = async (p = page) => {
+    setLoading(true);
     try {
-      const res = await fetch(API_URL, { headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token') } });
-      if (res.ok) { const data = await res.json(); setItems(Array.isArray(data) ? data : []); }
+      const res = await fetch(`${API_URL}?page=${p}&limit=20`, { headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token') } });
+      if (res.ok) {
+        const data = await res.json();
+        setItems(Array.isArray(data.data) ? data.data : []);
+        setPagination(data.pagination || {});
+      }
     } catch (e) { console.error(e); }
     setLoading(false);
   };
 
-  useEffect(() => { fetchData(); }, []);
+  useEffect(() => { fetchData(page); }, [page]);
 
   const filtered = items.filter(i =>
     Object.values(i).some(v => String(v).toLowerCase().includes(search.toLowerCase()))
@@ -47,14 +55,14 @@ export default function NetworkSlices() {
     try {
       const id = data._id || data.id;
       const res = await fetch(`${API_URL}/${id}`, { method: 'PUT', headers: headers(), body: JSON.stringify(data) });
-      if (res.ok) { fetchData(); setSelected(null); }
+      if (res.ok) { fetchData(page); setSelected(null); }
     } catch (e) { console.error(e); }
   };
 
   const handleDelete = async (id) => {
     try {
       const res = await fetch(`${API_URL}/${id}`, { method: 'DELETE', headers: headers() });
-      if (res.ok) { fetchData(); setSelected(null); }
+      if (res.ok) { fetchData(page); setSelected(null); }
     } catch (e) { console.error(e); }
   };
 
@@ -63,7 +71,7 @@ export default function NetworkSlices() {
     setError('');
     try {
       const res = await fetch(API_URL, { method: 'POST', headers: headers(), body: JSON.stringify(formData) });
-      if (res.ok) { fetchData(); setShowAdd(false); setFormData({}); }
+      if (res.ok) { fetchData(1); setShowAdd(false); setFormData({}); }
       else { const d = await res.json(); setError(d.error || 'Failed to create'); }
     } catch (e) { setError(e.message); }
   };
@@ -86,7 +94,7 @@ export default function NetworkSlices() {
             <FiSearch />
             <input placeholder="Search slices..." value={search} onChange={e => setSearch(e.target.value)} />
           </div>
-          <span style={{ color: 'var(--text-muted)', fontSize: '13px' }}>{filtered.length} slices</span>
+          <span style={{ color: 'var(--text-muted)', fontSize: '13px' }}>{pagination.total || 0} slices</span>
         </div>
 
         {loading ? (
@@ -94,25 +102,28 @@ export default function NetworkSlices() {
         ) : filtered.length === 0 ? (
           <div className="empty-state"><FiLayers /><h3>No network slices found</h3><p>Create your first network slice to get started</p></div>
         ) : (
-          <table>
-            <thead>
-              <tr>
-                <th>Name</th><th>Type</th><th>Status</th><th>Max Bandwidth</th><th>Latency</th><th>Devices</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filtered.map(item => (
-                <tr key={item._id || item.id} onClick={() => setSelected(item)}>
-                  <td style={{ color: 'var(--text-primary)', fontWeight: 600 }}>{item.name}</td>
-                  <td><span className={`badge ${typeColors[item.type] || 'badge-blue'}`}>{item.type}</span></td>
-                  <td><span className={`badge ${item.status === 'active' ? 'badge-green' : item.status === 'inactive' ? 'badge-red' : 'badge-yellow'}`}>{item.status}</span></td>
-                  <td>{item.maxBandwidth} Gbps</td>
-                  <td>{item.latency} ms</td>
-                  <td>{item.connectedDevices || 0}</td>
+          <>
+            <table>
+              <thead>
+                <tr>
+                  <th>Name</th><th>Type</th><th>Status</th><th>Max Bandwidth</th><th>Latency</th><th>Devices</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {filtered.map(item => (
+                  <tr key={item._id || item.id} onClick={() => setSelected(item)}>
+                    <td style={{ color: 'var(--text-primary)', fontWeight: 600 }}>{item.name}</td>
+                    <td><span className={`badge ${typeColors[item.type] || 'badge-blue'}`}>{item.type}</span></td>
+                    <td><span className={`badge ${item.status === 'active' ? 'badge-green' : item.status === 'inactive' ? 'badge-red' : 'badge-yellow'}`}>{item.status}</span></td>
+                    <td>{item.maxBandwidth} Gbps</td>
+                    <td>{item.latency} ms</td>
+                    <td>{item.connectedDevices || 0}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+            <Pagination page={page} totalPages={pagination.totalPages} total={pagination.total} limit={pagination.limit || 20} onPageChange={setPage} />
+          </>
         )}
       </div>
 

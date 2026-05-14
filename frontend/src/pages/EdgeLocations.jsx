@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { FiPlus, FiSearch, FiMapPin } from 'react-icons/fi';
+import Pagination from '../components/Pagination';
 import DetailModal from '../components/DetailModal';
 
 const API_URL = '/api/edge-locations';
@@ -20,37 +21,39 @@ const fields = [
 export default function EdgeLocations() {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [page, setPage] = useState(1);
+  const [pagination, setPagination] = useState({});
   const [search, setSearch] = useState('');
   const [selected, setSelected] = useState(null);
   const [showAdd, setShowAdd] = useState(false);
   const [formData, setFormData] = useState({});
   const [error, setError] = useState('');
 
-  const fetchData = async () => {
+  const fetchData = async (p = page) => {
     try {
-      const res = await fetch(API_URL, { headers: authHeader() });
-      if (res.ok) { const data = await res.json(); setItems(Array.isArray(data) ? data : []); }
+      const res = await fetch(`${API_URL}?page=${p}&limit=20`, { headers: authHeader() });
+      if (res.ok) { const data = await res.json(); setItems(Array.isArray(data.data) ? data.data : (Array.isArray(data) ? data : [])); setPagination(data.pagination || {}); }
     } catch (e) { console.error(e); }
     setLoading(false);
   };
 
-  useEffect(() => { fetchData(); }, []);
+  useEffect(() => { fetchData(page); }, [page]);
 
   const filtered = items.filter(i => Object.values(i).some(v => String(v).toLowerCase().includes(search.toLowerCase())));
 
   const handleSave = async (data) => {
-    try { const id = data._id || data.id; const res = await fetch(`${API_URL}/${id}`, { method: 'PUT', headers: headers(), body: JSON.stringify(data) }); if (res.ok) { fetchData(); setSelected(null); } } catch (e) { console.error(e); }
+    try { const id = data._id || data.id; const res = await fetch(`${API_URL}/${id}`, { method: 'PUT', headers: headers(), body: JSON.stringify(data) }); if (res.ok) { fetchData(page); setSelected(null); } } catch (e) { console.error(e); }
   };
 
   const handleDelete = async (id) => {
-    try { const res = await fetch(`${API_URL}/${id}`, { method: 'DELETE', headers: headers() }); if (res.ok) { fetchData(); setSelected(null); } } catch (e) { console.error(e); }
+    try { const res = await fetch(`${API_URL}/${id}`, { method: 'DELETE', headers: headers() }); if (res.ok) { fetchData(page); setSelected(null); } } catch (e) { console.error(e); }
   };
 
   const handleAdd = async (e) => {
     e.preventDefault(); setError('');
     try {
       const res = await fetch(API_URL, { method: 'POST', headers: headers(), body: JSON.stringify(formData) });
-      if (res.ok) { fetchData(); setShowAdd(false); setFormData({}); } else { const d = await res.json(); setError(d.error || 'Failed'); }
+      if (res.ok) { fetchData(1); setShowAdd(false); setFormData({}); } else { const d = await res.json(); setError(d.error || 'Failed'); }
     } catch (e) { setError(e.message); }
   };
 
@@ -105,7 +108,9 @@ export default function EdgeLocations() {
               })}
             </tbody>
           </table>
-        )}
+            <Pagination page={page} totalPages={pagination.totalPages} total={pagination.total} limit={pagination.limit || 20} onPageChange={setPage} />
+        )
+        }
       </div>
 
       <DetailModal isOpen={!!selected} item={selected} fields={fields} title="Edge Location Details" onClose={() => setSelected(null)} onSave={handleSave} onDelete={handleDelete} />

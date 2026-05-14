@@ -4,7 +4,8 @@ import {
   FiGrid, FiLayers, FiSliders, FiMapPin, FiSmartphone,
   FiShield, FiActivity, FiBarChart2, FiClock, FiCode,
   FiCalendar, FiKey, FiCreditCard, FiCpu, FiTrendingUp,
-  FiAlertTriangle, FiPieChart, FiLogOut, FiWifi
+  FiAlertTriangle, FiPieChart, FiLogOut, FiWifi,
+  FiGlobe, FiAlertOctagon, FiDollarSign, FiLock, FiCheckSquare
 } from 'react-icons/fi';
 
 const navSections = [
@@ -43,6 +44,7 @@ const navSections = [
     items: [
       { path: '/developer-apps', label: 'Developer Apps', icon: FiCode },
       { path: '/api-keys', label: 'API Keys', icon: FiKey },
+      { path: '/camara-apis', label: 'CAMARA APIs', icon: FiGlobe },
     ],
   },
   {
@@ -51,6 +53,14 @@ const navSections = [
       { path: '/ai-optimizer', label: 'Network Optimizer', icon: FiCpu },
       { path: '/ai-traffic', label: 'Traffic Analyzer', icon: FiTrendingUp },
       { path: '/ai-anomaly', label: 'Anomaly Detector', icon: FiAlertTriangle },
+      { path: '/ai-capacity-forecast', label: 'Capacity Forecast', icon: FiBarChart2 },
+      { path: '/ai-security-threat', label: 'Security Threat', icon: FiLock },
+      { path: '/ai-cost-optimizer', label: 'Cost Optimizer', icon: FiDollarSign },
+      { path: '/ai-network-slice-optimizer', label: 'Slice Optimizer', icon: FiLayers },
+      { path: '/ai-compliance-report', label: 'Compliance Report', icon: FiCheckSquare },
+      { path: '/ai-automated-provisioning', label: 'Auto Provisioning', icon: FiCpu },
+      { path: '/ai-multi-operator-federation', label: 'Federation', icon: FiGlobe },
+      { path: '/anomaly-rules', label: 'Anomaly Rules', icon: FiAlertOctagon },
     ],
   },
   {

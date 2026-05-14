@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { FiPlus, FiSearch, FiPieChart, FiTrendingUp, FiTrendingDown, FiMinus } from 'react-icons/fi';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line } from 'recharts';
+import Pagination from '../components/Pagination';
 import DetailModal from '../components/DetailModal';
 
 const API_URL = '/api/usage-analytics';
@@ -26,20 +27,22 @@ const trendIcon = (trend) => {
 export default function UsageAnalytics() {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [page, setPage] = useState(1);
+  const [pagination, setPagination] = useState({});
   const [search, setSearch] = useState('');
   const [selected, setSelected] = useState(null);
   const [showAdd, setShowAdd] = useState(false);
   const [formData, setFormData] = useState({});
   const [error, setError] = useState('');
 
-  const fetchData = async () => {
-    try { const res = await fetch(API_URL, { headers: authHeader() }); if (res.ok) { const data = await res.json(); setItems(Array.isArray(data) ? data : []); } } catch (e) { console.error(e); } setLoading(false);
+  const fetchData = async (p = page) => {
+    try { const res = await fetch(`${API_URL}?page=${p}&limit=20`, { headers: authHeader() }); if (res.ok) { const data = await res.json(); setItems(Array.isArray(data.data) ? data.data : (Array.isArray(data) ? data : [])); setPagination(data.pagination || {}); } } catch (e) { console.error(e); } setLoading(false);
   };
-  useEffect(() => { fetchData(); }, []);
+  useEffect(() => { fetchData(page); }, [page]);
   const filtered = items.filter(i => Object.values(i).some(v => String(v).toLowerCase().includes(search.toLowerCase())));
-  const handleSave = async (data) => { try { const id = data._id || data.id; await fetch(`${API_URL}/${id}`, { method: 'PUT', headers: headers(), body: JSON.stringify(data) }); fetchData(); setSelected(null); } catch (e) { console.error(e); } };
-  const handleDelete = async (id) => { try { await fetch(`${API_URL}/${id}`, { method: 'DELETE', headers: headers() }); fetchData(); setSelected(null); } catch (e) { console.error(e); } };
-  const handleAdd = async (e) => { e.preventDefault(); setError(''); try { const res = await fetch(API_URL, { method: 'POST', headers: headers(), body: JSON.stringify(formData) }); if (res.ok) { fetchData(); setShowAdd(false); setFormData({}); } else { const d = await res.json(); setError(d.error || 'Failed'); } } catch (e) { setError(e.message); } };
+  const handleSave = async (data) => { try { const id = data._id || data.id; await fetch(`${API_URL}/${id}`, { method: 'PUT', headers: headers(), body: JSON.stringify(data) }); fetchData(page); setSelected(null); } catch (e) { console.error(e); } };
+  const handleDelete = async (id) => { try { await fetch(`${API_URL}/${id}`, { method: 'DELETE', headers: headers() }); fetchData(page); setSelected(null); } catch (e) { console.error(e); } };
+  const handleAdd = async (e) => { e.preventDefault(); setError(''); try { const res = await fetch(API_URL, { method: 'POST', headers: headers(), body: JSON.stringify(formData) }); if (res.ok) { fetchData(1); setShowAdd(false); setFormData({}); } else { const d = await res.json(); setError(d.error || 'Failed'); } } catch (e) { setError(e.message); } };
 
   const chartData = items.slice(0, 10).map(i => ({ name: i.metricName ? i.metricName.substring(0, 15) : 'N/A', value: parseFloat(i.value) || 0 }));
 
@@ -106,7 +109,9 @@ export default function UsageAnalytics() {
               ))}
             </tbody>
           </table>
-        )}
+            <Pagination page={page} totalPages={pagination.totalPages} total={pagination.total} limit={pagination.limit || 20} onPageChange={setPage} />
+        )
+        }
       </div>
 
       <DetailModal isOpen={!!selected} item={selected} fields={fields} title="Analytics Details" onClose={() => setSelected(null)} onSave={handleSave} onDelete={handleDelete} />

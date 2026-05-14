@@ -18,7 +18,16 @@ import SimCards from './pages/SimCards';
 import AIOptimizer from './pages/AIOptimizer';
 import AITrafficAnalyzer from './pages/AITrafficAnalyzer';
 import AIAnomalyDetector from './pages/AIAnomalyDetector';
+import AICapacityForecast from './pages/AICapacityForecast';
+import AISecurityThreat from './pages/AISecurityThreat';
+import AICostOptimizer from './pages/AICostOptimizer';
+import AINetworkSliceOptimizer from './pages/AINetworkSliceOptimizer';
+import AIComplianceReport from './pages/AIComplianceReport';
+import AIAutomatedProvisioning from './pages/AIAutomatedProvisioning';
+import AIMultiOperatorFederation from './pages/AIMultiOperatorFederation';
 import UsageAnalytics from './pages/UsageAnalytics';
+import CamaraApis from './pages/CamaraApis';
+import AnomalyRules from './pages/AnomalyRules';
 
 function ProtectedRoute({ children }) {
   const token = localStorage.getItem('token');
@@ -69,7 +78,16 @@ export default function App() {
           <Route path="/ai-optimizer" element={<AIOptimizer />} />
           <Route path="/ai-traffic" element={<AITrafficAnalyzer />} />
           <Route path="/ai-anomaly" element={<AIAnomalyDetector />} />
+          <Route path="/ai-capacity-forecast" element={<AICapacityForecast />} />
+          <Route path="/ai-security-threat" element={<AISecurityThreat />} />
+          <Route path="/ai-cost-optimizer" element={<AICostOptimizer />} />
+          <Route path="/ai-network-slice-optimizer" element={<AINetworkSliceOptimizer />} />
+          <Route path="/ai-compliance-report" element={<AIComplianceReport />} />
+          <Route path="/ai-automated-provisioning" element={<AIAutomatedProvisioning />} />
+          <Route path="/ai-multi-operator-federation" element={<AIMultiOperatorFederation />} />
           <Route path="/usage-analytics" element={<UsageAnalytics />} />
+          <Route path="/camara-apis" element={<CamaraApis />} />
+          <Route path="/anomaly-rules" element={<AnomalyRules />} />
           <Route path="*" element={<Navigate to="/dashboard" replace />} />
         </Routes>
       </AppLayout>
