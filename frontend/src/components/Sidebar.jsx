@@ -70,6 +70,12 @@ const navSections = [
       { path: '/network-events', label: 'Network Events', icon: FiCalendar },
     ],
   },
+  {
+    title: 'Custom Views',
+    items: [
+      { path: '/custom-views', label: 'Network Views', icon: FiPieChart },
+    ],
+  },
 ];
 
 export default function Sidebar() {

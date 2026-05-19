@@ -53,6 +53,9 @@ app.use('/api/camara', require('./routes/camara'));
 // Anomaly Rules Engine (JWT auth)
 app.use('/api/anomaly-rules', require('./routes/anomalyRules'));
 
+// Custom Views (4 features: 2 viz + 2 non-viz) — mounted BEFORE 404 / error handler
+app.use('/api/custom-views', require('./routes/customViews'));
+
 // Global error handler
 app.use((err, req, res, next) => {
   console.error('Unhandled error:', err);

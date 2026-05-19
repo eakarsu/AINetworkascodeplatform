@@ -1,33 +1,50 @@
-import React from 'react';
+import React, { Suspense, lazy } from 'react';
 import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import Sidebar from './components/Sidebar';
 import Login from './pages/Login';
-import Dashboard from './pages/Dashboard';
-import NetworkSlices from './pages/NetworkSlices';
-import QosProfiles from './pages/QosProfiles';
-import EdgeLocations from './pages/EdgeLocations';
-import ConnectedDevices from './pages/ConnectedDevices';
-import TrafficPolicies from './pages/TrafficPolicies';
-import SlaMonitors from './pages/SlaMonitors';
-import BandwidthAllocations from './pages/BandwidthAllocations';
-import LatencyProfiles from './pages/LatencyProfiles';
-import DeveloperApps from './pages/DeveloperApps';
-import NetworkEvents from './pages/NetworkEvents';
-import ApiKeys from './pages/ApiKeys';
-import SimCards from './pages/SimCards';
-import AIOptimizer from './pages/AIOptimizer';
-import AITrafficAnalyzer from './pages/AITrafficAnalyzer';
-import AIAnomalyDetector from './pages/AIAnomalyDetector';
-import AICapacityForecast from './pages/AICapacityForecast';
-import AISecurityThreat from './pages/AISecurityThreat';
-import AICostOptimizer from './pages/AICostOptimizer';
-import AINetworkSliceOptimizer from './pages/AINetworkSliceOptimizer';
-import AIComplianceReport from './pages/AIComplianceReport';
-import AIAutomatedProvisioning from './pages/AIAutomatedProvisioning';
-import AIMultiOperatorFederation from './pages/AIMultiOperatorFederation';
-import UsageAnalytics from './pages/UsageAnalytics';
-import CamaraApis from './pages/CamaraApis';
-import AnomalyRules from './pages/AnomalyRules';
+
+// Lazy-load all feature pages so a parse error in any single page does not
+// crash the entire bundle. Each broken page is isolated to its own route.
+function safeLazy(loader) {
+  return lazy(() =>
+    loader().catch((err) => ({
+      default: () => (
+        <div style={{ padding: 24, color: '#fca5a5' }}>
+          <h2>Page failed to load</h2>
+          <pre style={{ whiteSpace: 'pre-wrap', fontSize: 12 }}>{String(err && err.message || err)}</pre>
+        </div>
+      ),
+    }))
+  );
+}
+
+const Dashboard                 = safeLazy(() => import('./pages/Dashboard'));
+const NetworkSlices             = safeLazy(() => import('./pages/NetworkSlices'));
+const QosProfiles               = safeLazy(() => import('./pages/QosProfiles'));
+const EdgeLocations             = safeLazy(() => import('./pages/EdgeLocations'));
+const ConnectedDevices          = safeLazy(() => import('./pages/ConnectedDevices'));
+const TrafficPolicies           = safeLazy(() => import('./pages/TrafficPolicies'));
+const SlaMonitors               = safeLazy(() => import('./pages/SlaMonitors'));
+const BandwidthAllocations      = safeLazy(() => import('./pages/BandwidthAllocations'));
+const LatencyProfiles           = safeLazy(() => import('./pages/LatencyProfiles'));
+const DeveloperApps             = safeLazy(() => import('./pages/DeveloperApps'));
+const NetworkEvents             = safeLazy(() => import('./pages/NetworkEvents'));
+const ApiKeys                   = safeLazy(() => import('./pages/ApiKeys'));
+const SimCards                  = safeLazy(() => import('./pages/SimCards'));
+const AIOptimizer               = safeLazy(() => import('./pages/AIOptimizer'));
+const AITrafficAnalyzer         = safeLazy(() => import('./pages/AITrafficAnalyzer'));
+const AIAnomalyDetector         = safeLazy(() => import('./pages/AIAnomalyDetector'));
+const AICapacityForecast        = safeLazy(() => import('./pages/AICapacityForecast'));
+const AISecurityThreat          = safeLazy(() => import('./pages/AISecurityThreat'));
+const AICostOptimizer           = safeLazy(() => import('./pages/AICostOptimizer'));
+const AINetworkSliceOptimizer   = safeLazy(() => import('./pages/AINetworkSliceOptimizer'));
+const AIComplianceReport        = safeLazy(() => import('./pages/AIComplianceReport'));
+const AIAutomatedProvisioning   = safeLazy(() => import('./pages/AIAutomatedProvisioning'));
+const AIMultiOperatorFederation = safeLazy(() => import('./pages/AIMultiOperatorFederation'));
+const UsageAnalytics            = safeLazy(() => import('./pages/UsageAnalytics'));
+const CamaraApis                = safeLazy(() => import('./pages/CamaraApis'));
+const AnomalyRules              = safeLazy(() => import('./pages/AnomalyRules'));
+const CustomViewsPage           = safeLazy(() => import('./pages/CustomViewsPage'));
 
 function ProtectedRoute({ children }) {
   const token = localStorage.getItem('token');
@@ -61,35 +78,38 @@ export default function App() {
   return (
     <ProtectedRoute>
       <AppLayout>
-        <Routes>
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/network-slices" element={<NetworkSlices />} />
-          <Route path="/qos-profiles" element={<QosProfiles />} />
-          <Route path="/edge-locations" element={<EdgeLocations />} />
-          <Route path="/devices" element={<ConnectedDevices />} />
-          <Route path="/traffic-policies" element={<TrafficPolicies />} />
-          <Route path="/sla-monitors" element={<SlaMonitors />} />
-          <Route path="/bandwidth-allocations" element={<BandwidthAllocations />} />
-          <Route path="/latency-profiles" element={<LatencyProfiles />} />
-          <Route path="/developer-apps" element={<DeveloperApps />} />
-          <Route path="/network-events" element={<NetworkEvents />} />
-          <Route path="/api-keys" element={<ApiKeys />} />
-          <Route path="/sim-cards" element={<SimCards />} />
-          <Route path="/ai-optimizer" element={<AIOptimizer />} />
-          <Route path="/ai-traffic" element={<AITrafficAnalyzer />} />
-          <Route path="/ai-anomaly" element={<AIAnomalyDetector />} />
-          <Route path="/ai-capacity-forecast" element={<AICapacityForecast />} />
-          <Route path="/ai-security-threat" element={<AISecurityThreat />} />
-          <Route path="/ai-cost-optimizer" element={<AICostOptimizer />} />
-          <Route path="/ai-network-slice-optimizer" element={<AINetworkSliceOptimizer />} />
-          <Route path="/ai-compliance-report" element={<AIComplianceReport />} />
-          <Route path="/ai-automated-provisioning" element={<AIAutomatedProvisioning />} />
-          <Route path="/ai-multi-operator-federation" element={<AIMultiOperatorFederation />} />
-          <Route path="/usage-analytics" element={<UsageAnalytics />} />
-          <Route path="/camara-apis" element={<CamaraApis />} />
-          <Route path="/anomaly-rules" element={<AnomalyRules />} />
-          <Route path="*" element={<Navigate to="/dashboard" replace />} />
-        </Routes>
+        <Suspense fallback={<div style={{ padding: 24 }}>Loading...</div>}>
+          <Routes>
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/network-slices" element={<NetworkSlices />} />
+            <Route path="/qos-profiles" element={<QosProfiles />} />
+            <Route path="/edge-locations" element={<EdgeLocations />} />
+            <Route path="/devices" element={<ConnectedDevices />} />
+            <Route path="/traffic-policies" element={<TrafficPolicies />} />
+            <Route path="/sla-monitors" element={<SlaMonitors />} />
+            <Route path="/bandwidth-allocations" element={<BandwidthAllocations />} />
+            <Route path="/latency-profiles" element={<LatencyProfiles />} />
+            <Route path="/developer-apps" element={<DeveloperApps />} />
+            <Route path="/network-events" element={<NetworkEvents />} />
+            <Route path="/api-keys" element={<ApiKeys />} />
+            <Route path="/sim-cards" element={<SimCards />} />
+            <Route path="/ai-optimizer" element={<AIOptimizer />} />
+            <Route path="/ai-traffic" element={<AITrafficAnalyzer />} />
+            <Route path="/ai-anomaly" element={<AIAnomalyDetector />} />
+            <Route path="/ai-capacity-forecast" element={<AICapacityForecast />} />
+            <Route path="/ai-security-threat" element={<AISecurityThreat />} />
+            <Route path="/ai-cost-optimizer" element={<AICostOptimizer />} />
+            <Route path="/ai-network-slice-optimizer" element={<AINetworkSliceOptimizer />} />
+            <Route path="/ai-compliance-report" element={<AIComplianceReport />} />
+            <Route path="/ai-automated-provisioning" element={<AIAutomatedProvisioning />} />
+            <Route path="/ai-multi-operator-federation" element={<AIMultiOperatorFederation />} />
+            <Route path="/usage-analytics" element={<UsageAnalytics />} />
+            <Route path="/camara-apis" element={<CamaraApis />} />
+            <Route path="/anomaly-rules" element={<AnomalyRules />} />
+            <Route path="/custom-views" element={<CustomViewsPage />} />
+            <Route path="*" element={<Navigate to="/dashboard" replace />} />
+          </Routes>
+        </Suspense>
       </AppLayout>
     </ProtectedRoute>
   );
