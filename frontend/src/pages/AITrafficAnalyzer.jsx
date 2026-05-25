@@ -33,6 +33,7 @@ export default function AITrafficAnalyzer() {
   const [pagination, setPagination] = useState({});
   const [histPage, setHistPage] = useState(1);
   const [error, setError] = useState('');
+
   const [selectedHistory, setSelectedHistory] = useState(null);
 
   const fetchHistory = async (p = histPage) => {
@@ -78,6 +79,7 @@ export default function AITrafficAnalyzer() {
           ))}
         </div>
         <div className="form-group">
+
           <textarea
             className="form-control"
             rows={5}

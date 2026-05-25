@@ -147,6 +147,7 @@ export default function AIOptimizer() {
   const [pagination, setPagination] = useState({});
   const [histPage, setHistPage] = useState(1);
   const [error, setError] = useState('');
+
   const [histLoading, setHistLoading] = useState(false);
 
   const fetchHistory = async (p = histPage) => {
@@ -198,6 +199,7 @@ export default function AIOptimizer() {
           ))}
         </div>
         <div className="form-group">
+
           <textarea
             className="form-control"
             rows={5}

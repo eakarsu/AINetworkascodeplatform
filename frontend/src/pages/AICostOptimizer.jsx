@@ -21,6 +21,7 @@ export default function AICostOptimizer() {
   const [result, setResult] = useState(null);
   const [error, setError] = useState('');
 
+
   const run = async () => {
     if (!input.trim()) return;
     setLoading(true); setError(''); setResult(null);
@@ -52,6 +53,7 @@ export default function AICostOptimizer() {
           {samples.map((s, i) => <button key={i} onClick={() => setInput(s.data)}>{s.label}</button>)}
         </div>
         <div className="form-group">
+
           <textarea className="form-control" rows={6} placeholder="Paste cost breakdown, usage data, slice allocations..."
             value={input} onChange={e => setInput(e.target.value)} />
         </div>

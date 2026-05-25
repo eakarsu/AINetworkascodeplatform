@@ -22,6 +22,7 @@ export default function AICapacityForecast() {
   const [result, setResult] = useState(null);
   const [error, setError] = useState('');
 
+
   const run = async () => {
     if (!input.trim()) return;
     setLoading(true); setError(''); setResult(null);
@@ -58,6 +59,7 @@ export default function AICapacityForecast() {
             onChange={e => setHorizon(parseInt(e.target.value) || 30)} style={{ maxWidth: 140 }} />
         </div>
         <div className="form-group">
+
           <textarea className="form-control" rows={6} placeholder="Paste usage history, slice metrics, growth trends..."
             value={input} onChange={e => setInput(e.target.value)} />
         </div>
