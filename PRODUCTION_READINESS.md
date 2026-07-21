@@ -1,0 +1,5 @@
+# Governed network-as-code run
+The durable path is `/api/governed-network-runs`. Every run binds signed input/config/toolchain/fixture versions to sandbox attestations, execution receipts, evaluations, approvals, sealed artifacts, queued changes, apply/rollback receipts, tenant scope, idempotency, and immutable provenance.
+Apply `backend/migrations/001_governed_network_change.sql` separately. Repository, CI/CD, model, telemetry, secrets, artifacts, and ticketing adapters are declared but unconfigured. No code or network change is executed locally; external sandbox, credentials, contract tests, write approval, change window, and rollback validation fail closed. Generated threat detection/provider routes are quarantined.
+Versioned fixtures must benchmark correctness, regression, reliability, latency, cost, concurrency, failure, and recovery. Secret values are rejected in workflow payloads and only opaque manager references are allowed.
+Use `.env.example`, leaving bootstrap/demo/provider switches false. Verify with `node --test backend/governance/*.test.cjs` and `bash -n start.sh`; the launcher is nondestructive.

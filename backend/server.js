@@ -6,6 +6,11 @@ const cors = require('cors');
 const helmet = require('helmet');
 const { requestCamelToSnake, responseSnakeToCamel } = require('./middleware/caseConverter');
 const runMigrations = require('./migrate');
+const {validateRuntime}=require('./governance/runtime');
+const {createProviderGate}=require('./governance/providerGate');
+const governanceRouter=require('./governance/router');
+
+validateRuntime();
 
 const app = express();
 const PORT = process.env.BACKEND_PORT || 4000;
@@ -14,12 +19,11 @@ const PORT = process.env.BACKEND_PORT || 4000;
 app.use(helmet());
 
 // CORS
-app.use(cors({
-  origin: process.env.CLIENT_URL || 'http://localhost:5173',
-  credentials: true,
-}));
+const allowedOrigins=String(process.env.CORS_ORIGINS||process.env.CLIENT_URL||'http://localhost:5173').split(',').map(v=>v.trim()).filter(Boolean);
+app.use(cors({origin:(origin,cb)=>!origin||allowedOrigins.includes(origin)?cb(null,true):cb(new Error('Origin not allowed by CORS')),credentials:true}));
 
 app.use(express.json({ limit: '10mb' }));
+app.use(createProviderGate(['/api/ai','/api/gap','/api/network-optimizer-agent','/api/threat-detection-agent','/api/capacity-planning-ai','/api/network-slicing-autonomous','/api/api-marketplace']));
 
 // Case conversion: camelCase <-> snake_case
 app.use(responseSnakeToCamel);
@@ -55,6 +59,7 @@ app.use('/api/anomaly-rules', require('./routes/anomalyRules'));
 
 // Custom Views (4 features: 2 viz + 2 non-viz) — mounted BEFORE 404 / error handler
 app.use('/api/custom-views', require('./routes/customViews'));
+app.use('/api/governed-network-runs',governanceRouter);
 
 // Global error handler
 app.use((err, req, res, next) => {
@@ -63,7 +68,8 @@ app.use((err, req, res, next) => {
 });
 
 // Run DB migrations then start server
-runMigrations()
+const migrationReady=process.env.ENABLE_LEGACY_SCHEMA_BOOTSTRAP==='true'?runMigrations():Promise.resolve();
+migrationReady
   .catch(err => console.error('Migration warning:', err.message))
   .finally(() => {
     app.listen(PORT, () => {

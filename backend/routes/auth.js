@@ -5,7 +5,7 @@ const jwt = require('jsonwebtoken');
 const pool = require('../db');
 const auth = require('../middleware/auth');
 
-const JWT_SECRET = process.env.JWT_SECRET || 'default_jwt_secret_change_me';
+const JWT_SECRET = process.env.JWT_SECRET;
 const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || '24h';
 
 // POST /api/auth/login
