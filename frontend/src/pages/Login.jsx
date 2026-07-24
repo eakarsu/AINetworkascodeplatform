@@ -32,8 +32,8 @@ export default function Login() {
   };
 
   const handleDemoLogin = () => {
-    setEmail('admin@5gnetwork.com');
-    setPassword('admin123');
+    setEmail(import.meta.env.VITE_DEMO_EMAIL || '');
+    setPassword(import.meta.env.VITE_DEMO_PASSWORD || '');
   };
 
   return (
