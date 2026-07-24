@@ -58,6 +58,7 @@ export default function TrafficPolicies() {
         ) : filtered.length === 0 ? (
           <div className="empty-state"><FiShield /><h3>No policies found</h3><p>Create your first traffic policy</p></div>
         ) : (
+          <>
           <table>
             <thead><tr><th>Name</th><th>Type</th><th>Priority</th><th>Source</th><th>Destination</th><th>Action</th><th>Status</th></tr></thead>
             <tbody>
@@ -75,8 +76,8 @@ export default function TrafficPolicies() {
             </tbody>
           </table>
             <Pagination page={page} totalPages={pagination.totalPages} total={pagination.total} limit={pagination.limit || 20} onPageChange={setPage} />
-        )
-        }
+          </>
+        )}
       </div>
 
       <DetailModal isOpen={!!selected} item={selected} fields={fields} title="Traffic Policy Details" onClose={() => setSelected(null)} onSave={handleSave} onDelete={handleDelete} />

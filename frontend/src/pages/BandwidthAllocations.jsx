@@ -60,6 +60,7 @@ export default function BandwidthAllocations() {
         ) : filtered.length === 0 ? (
           <div className="empty-state"><FiBarChart2 /><h3>No allocations found</h3><p>Create your first bandwidth allocation</p></div>
         ) : (
+          <>
           <table>
             <thead><tr><th>Name</th><th>Allocated</th><th>Used</th><th>Utilization</th><th>Network Slice</th><th>Status</th></tr></thead>
             <tbody>
@@ -86,8 +87,8 @@ export default function BandwidthAllocations() {
             </tbody>
           </table>
             <Pagination page={page} totalPages={pagination.totalPages} total={pagination.total} limit={pagination.limit || 20} onPageChange={setPage} />
-        )
-        }
+          </>
+        )}
       </div>
 
       <DetailModal isOpen={!!selected} item={selected} fields={fields} title="Bandwidth Allocation Details" onClose={() => setSelected(null)} onSave={handleSave} onDelete={handleDelete} />

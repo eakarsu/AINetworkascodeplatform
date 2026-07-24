@@ -58,6 +58,7 @@ export default function SimCards() {
         ) : filtered.length === 0 ? (
           <div className="empty-state"><FiCreditCard /><h3>No SIM cards found</h3><p>Provision your first SIM card</p></div>
         ) : (
+          <>
           <table>
             <thead><tr><th>ICCID</th><th>IMSI</th><th>MSISDN</th><th>Status</th><th>Network Slice</th><th>Device</th><th>Data Plan</th></tr></thead>
             <tbody>
@@ -75,8 +76,8 @@ export default function SimCards() {
             </tbody>
           </table>
             <Pagination page={page} totalPages={pagination.totalPages} total={pagination.total} limit={pagination.limit || 20} onPageChange={setPage} />
-        )
-        }
+          </>
+        )}
       </div>
 
       <DetailModal isOpen={!!selected} item={selected} fields={fields} title="SIM Card Details" onClose={() => setSelected(null)} onSave={handleSave} onDelete={handleDelete} />

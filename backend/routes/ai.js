@@ -8,7 +8,7 @@ const { aiRateLimiter } = require('../middleware/rateLimiter');
 router.use(auth);
 router.use(aiRateLimiter);
 
-const OPENROUTER_URL = 'https://openrouter.ai/api/v1/chat/completions';
+const OPENROUTER_URL = `${String(process.env.OPENROUTER_BASE_URL || 'https://openrouter.ai/api/v1').replace(/\/$/, '')}/chat/completions`;
 const AI_MODEL = process.env.OPENROUTER_MODEL || 'anthropic/claude-3-5-sonnet-20241022';
 const MAX_PROMPT_LENGTH = 3000;
 
@@ -24,7 +24,7 @@ async function callOpenRouter(systemPrompt, userMessage, model) {
     headers: {
       'Authorization': `Bearer ${process.env.OPENROUTER_API_KEY}`,
       'Content-Type': 'application/json',
-      'HTTP-Referer': 'http://localhost:3000',
+      'HTTP-Referer': process.env.CLIENT_URL || 'http://localhost:3000',
       'X-Title': '5G Network-as-Code Platform',
     },
     body: JSON.stringify({

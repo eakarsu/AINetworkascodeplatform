@@ -83,6 +83,7 @@ export default function QosProfiles() {
         ) : filtered.length === 0 ? (
           <div className="empty-state"><FiSliders /><h3>No QoS profiles found</h3><p>Create your first QoS profile</p></div>
         ) : (
+          <>
           <table>
             <thead><tr><th>Name</th><th>Priority</th><th>Max BW</th><th>Min BW</th><th>Max Latency</th><th>Jitter</th><th>Status</th></tr></thead>
             <tbody>
@@ -100,8 +101,8 @@ export default function QosProfiles() {
             </tbody>
           </table>
             <Pagination page={page} totalPages={pagination.totalPages} total={pagination.total} limit={pagination.limit || 20} onPageChange={setPage} />
-        )
-        }
+          </>
+        )}
       </div>
 
       <DetailModal isOpen={!!selected} item={selected} fields={fields} title="QoS Profile Details" onClose={() => setSelected(null)} onSave={handleSave} onDelete={handleDelete} />

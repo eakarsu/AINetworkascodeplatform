@@ -55,6 +55,7 @@ export default function LatencyProfiles() {
         ) : filtered.length === 0 ? (
           <div className="empty-state"><FiClock /><h3>No latency profiles found</h3><p>Create your first latency profile</p></div>
         ) : (
+          <>
           <table>
             <thead><tr><th>Name</th><th>Target Latency</th><th>Current Latency</th><th>Jitter</th><th>Route</th><th>Status</th></tr></thead>
             <tbody>
@@ -74,8 +75,8 @@ export default function LatencyProfiles() {
             </tbody>
           </table>
             <Pagination page={page} totalPages={pagination.totalPages} total={pagination.total} limit={pagination.limit || 20} onPageChange={setPage} />
-        )
-        }
+          </>
+        )}
       </div>
 
       <DetailModal isOpen={!!selected} item={selected} fields={fields} title="Latency Profile Details" onClose={() => setSelected(null)} onSave={handleSave} onDelete={handleDelete} />

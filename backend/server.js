@@ -4,6 +4,7 @@ require('dotenv').config({ path: path.join(__dirname, '..', '.env') });
 const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
+const bcrypt = require('bcryptjs');
 const { requestCamelToSnake, responseSnakeToCamel } = require('./middleware/caseConverter');
 const runMigrations = require('./migrate');
 const {validateRuntime}=require('./governance/runtime');
@@ -23,7 +24,7 @@ const allowedOrigins=String(process.env.CORS_ORIGINS||process.env.CLIENT_URL||'h
 app.use(cors({origin:(origin,cb)=>!origin||allowedOrigins.includes(origin)?cb(null,true):cb(new Error('Origin not allowed by CORS')),credentials:true}));
 
 app.use(express.json({ limit: '10mb' }));
-app.use(createProviderGate(['/api/ai','/api/gap','/api/network-optimizer-agent','/api/threat-detection-agent','/api/capacity-planning-ai','/api/network-slicing-autonomous','/api/api-marketplace']));
+app.use(createProviderGate(['/api/gap','/api/network-optimizer-agent','/api/threat-detection-agent','/api/capacity-planning-ai','/api/network-slicing-autonomous','/api/api-marketplace']));
 
 // Case conversion: camelCase <-> snake_case
 app.use(responseSnakeToCamel);
@@ -67,15 +68,50 @@ app.use((err, req, res, next) => {
   res.status(500).json({ error: 'Internal server error' });
 });
 
-// Run DB migrations then start server
-const migrationReady=process.env.ENABLE_LEGACY_SCHEMA_BOOTSTRAP==='true'?runMigrations():Promise.resolve();
-migrationReady
-  .catch(err => console.error('Migration warning:', err.message))
-  .finally(() => {
-    app.listen(PORT, () => {
-      console.log(`5G Network-as-Code API running on port ${PORT}`);
-    });
-  });
+async function initializeRuntime() {
+  if (process.env.MIGRATE_ON_START !== 'true') return;
+  const email = process.env.PROVISION_ADMIN_EMAIL || process.env.ADMIN_EMAIL;
+  const password = process.env.PROVISION_ADMIN_PASSWORD || process.env.ADMIN_PASSWORD;
+  if (!email || !password) throw new Error('Runtime admin credentials are required');
+  await require('./db').query(`
+    CREATE TABLE IF NOT EXISTS users (
+      id SERIAL PRIMARY KEY,
+      email VARCHAR UNIQUE NOT NULL,
+      password VARCHAR NOT NULL,
+      name VARCHAR NOT NULL,
+      role VARCHAR DEFAULT 'admin',
+      created_at TIMESTAMP DEFAULT NOW()
+    );
+    CREATE TABLE IF NOT EXISTS ai_analyses (
+      id SERIAL PRIMARY KEY,
+      type VARCHAR(100) NOT NULL,
+      title VARCHAR(255),
+      input_data TEXT,
+      result TEXT,
+      status VARCHAR(30) DEFAULT 'completed',
+      model VARCHAR(255),
+      metadata JSONB,
+      created_at TIMESTAMPTZ DEFAULT NOW(),
+      updated_at TIMESTAMPTZ
+    );
+    CREATE TABLE IF NOT EXISTS api_keys (
+      id SERIAL PRIMARY KEY,
+      api_key VARCHAR(255),
+      usage_count INTEGER DEFAULT 0,
+      is_active BOOLEAN DEFAULT TRUE
+    );
+  `);
+  const passwordHash = await bcrypt.hash(password, 10);
+  await require('./db').query(
+    `INSERT INTO users (email,password,name,role) VALUES ($1,$2,$3,'admin')
+     ON CONFLICT(email) DO UPDATE SET password=EXCLUDED.password,name=EXCLUDED.name,role=EXCLUDED.role`,
+    [email, passwordHash, process.env.PROVISION_ADMIN_NAME || 'Runtime Administrator']
+  );
+  await runMigrations();
+}
+initializeRuntime()
+  .then(() => app.listen(PORT, () => console.log(`5G Network-as-Code API running on port ${PORT}`)))
+  .catch((error) => { console.error('Runtime initialization failed:', error.message); process.exit(1); });
 
 module.exports = app;
 

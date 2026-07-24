@@ -94,6 +94,7 @@ export default function UsageAnalytics() {
         ) : filtered.length === 0 ? (
           <div className="empty-state"><FiPieChart /><h3>No metrics found</h3><p>Add your first usage metric</p></div>
         ) : (
+          <>
           <table>
             <thead><tr><th>Metric</th><th>Category</th><th>Value</th><th>Unit</th><th>Period</th><th>Trend</th></tr></thead>
             <tbody>
@@ -110,8 +111,8 @@ export default function UsageAnalytics() {
             </tbody>
           </table>
             <Pagination page={page} totalPages={pagination.totalPages} total={pagination.total} limit={pagination.limit || 20} onPageChange={setPage} />
-        )
-        }
+          </>
+        )}
       </div>
 
       <DetailModal isOpen={!!selected} item={selected} fields={fields} title="Analytics Details" onClose={() => setSelected(null)} onSave={handleSave} onDelete={handleDelete} />

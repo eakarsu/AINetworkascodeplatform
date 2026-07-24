@@ -56,6 +56,7 @@ export default function NetworkEvents() {
         ) : filtered.length === 0 ? (
           <div className="empty-state"><FiCalendar /><h3>No events found</h3><p>No network events recorded</p></div>
         ) : (
+          <>
           <table>
             <thead><tr><th>Type</th><th>Severity</th><th>Source</th><th>Message</th><th>Resolved</th><th>Time</th></tr></thead>
             <tbody>
@@ -72,8 +73,8 @@ export default function NetworkEvents() {
             </tbody>
           </table>
             <Pagination page={page} totalPages={pagination.totalPages} total={pagination.total} limit={pagination.limit || 20} onPageChange={setPage} />
-        )
-        }
+          </>
+        )}
       </div>
 
       <DetailModal isOpen={!!selected} item={selected} fields={fields} title="Event Details" onClose={() => setSelected(null)} onSave={handleSave} onDelete={handleDelete} />

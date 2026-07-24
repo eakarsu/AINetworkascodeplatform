@@ -56,6 +56,7 @@ export default function SlaMonitors() {
         ) : filtered.length === 0 ? (
           <div className="empty-state"><FiActivity /><h3>No SLA monitors found</h3><p>Create your first SLA monitor</p></div>
         ) : (
+          <>
           <table>
             <thead><tr><th>Name</th><th>Service</th><th>Target Uptime</th><th>Current Uptime</th><th>Status</th></tr></thead>
             <tbody>
@@ -74,8 +75,8 @@ export default function SlaMonitors() {
             </tbody>
           </table>
             <Pagination page={page} totalPages={pagination.totalPages} total={pagination.total} limit={pagination.limit || 20} onPageChange={setPage} />
-        )
-        }
+          </>
+        )}
       </div>
 
       <DetailModal isOpen={!!selected} item={selected} fields={fields} title="SLA Monitor Details" onClose={() => setSelected(null)} onSave={handleSave} onDelete={handleDelete} />

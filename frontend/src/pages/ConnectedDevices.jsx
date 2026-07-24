@@ -73,6 +73,7 @@ export default function ConnectedDevices() {
         ) : filtered.length === 0 ? (
           <div className="empty-state"><FiSmartphone /><h3>No devices found</h3><p>Register your first device</p></div>
         ) : (
+          <>
           <table>
             <thead><tr><th>Name</th><th>Type</th><th>IMEI</th><th>IP Address</th><th>Status</th><th>Slice</th><th>Data Usage</th></tr></thead>
             <tbody>
@@ -90,8 +91,8 @@ export default function ConnectedDevices() {
             </tbody>
           </table>
             <Pagination page={page} totalPages={pagination.totalPages} total={pagination.total} limit={pagination.limit || 20} onPageChange={setPage} />
-        )
-        }
+          </>
+        )}
       </div>
 
       <DetailModal isOpen={!!selected} item={selected} fields={fields} title="Device Details" onClose={() => setSelected(null)} onSave={handleSave} onDelete={handleDelete} />

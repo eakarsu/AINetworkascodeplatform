@@ -1,4 +1,4 @@
-const rateLimit = require('express-rate-limit');
+const { rateLimit, ipKeyGenerator } = require('express-rate-limit');
 
 // AI routes: 20 requests per hour per user ID or IP
 const aiRateLimiter = rateLimit({
@@ -6,7 +6,7 @@ const aiRateLimiter = rateLimit({
   max: 20,
   keyGenerator: (req) => {
     // Use user ID from JWT (set by auth middleware) or fall back to IP
-    return (req.user && req.user.id) ? `user:${req.user.id}` : req.ip;
+    return (req.user && req.user.id) ? `user:${req.user.id}` : ipKeyGenerator(req.ip);
   },
   standardHeaders: true,
   legacyHeaders: false,

@@ -55,6 +55,7 @@ export default function DeveloperApps() {
         ) : filtered.length === 0 ? (
           <div className="empty-state"><FiCode /><h3>No developer apps found</h3><p>Register your first application</p></div>
         ) : (
+          <>
           <table>
             <thead><tr><th>Name</th><th>Developer</th><th>Type</th><th>API Calls Today</th><th>Limit</th><th>Status</th></tr></thead>
             <tbody>
@@ -71,8 +72,8 @@ export default function DeveloperApps() {
             </tbody>
           </table>
             <Pagination page={page} totalPages={pagination.totalPages} total={pagination.total} limit={pagination.limit || 20} onPageChange={setPage} />
-        )
-        }
+          </>
+        )}
       </div>
 
       <DetailModal isOpen={!!selected} item={selected} fields={fields} title="Developer App Details" onClose={() => setSelected(null)} onSave={handleSave} onDelete={handleDelete} />

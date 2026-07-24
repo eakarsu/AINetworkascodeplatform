@@ -82,6 +82,7 @@ export default function EdgeLocations() {
         ) : filtered.length === 0 ? (
           <div className="empty-state"><FiMapPin /><h3>No edge locations found</h3><p>Add your first edge location</p></div>
         ) : (
+          <>
           <table>
             <thead><tr><th>Name</th><th>Region</th><th>City</th><th>Status</th><th>Capacity</th><th>Load</th><th>Latency</th></tr></thead>
             <tbody>
@@ -109,8 +110,8 @@ export default function EdgeLocations() {
             </tbody>
           </table>
             <Pagination page={page} totalPages={pagination.totalPages} total={pagination.total} limit={pagination.limit || 20} onPageChange={setPage} />
-        )
-        }
+          </>
+        )}
       </div>
 
       <DetailModal isOpen={!!selected} item={selected} fields={fields} title="Edge Location Details" onClose={() => setSelected(null)} onSave={handleSave} onDelete={handleDelete} />
