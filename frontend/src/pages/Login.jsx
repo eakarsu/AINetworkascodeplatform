@@ -86,7 +86,7 @@ export default function Login() {
         <div className="login-divider">or</div>
 
         <button className="btn btn-demo" onClick={handleDemoLogin}>
-          <FiZap /> Quick Demo Access
+          <FiZap /> Auto Fill Demo Credentials
         </button>
       </div>
     </div>
