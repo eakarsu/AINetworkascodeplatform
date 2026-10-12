@@ -1,3 +1,5 @@
+
+import FullAIExamples, { useFullAIExamples } from "../components/FullAIExamples.jsx";
 import React, { useState, useEffect } from 'react';
 import { FiTrendingUp, FiZap, FiClock } from 'react-icons/fi';
 import AIResultDisplay from '../components/AIResultDisplay';
@@ -26,6 +28,8 @@ const sampleInputs = [
 ];
 
 export default function AITrafficAnalyzer() {
+  const fullAIExamples = useFullAIExamples();
+
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState(null);
@@ -63,7 +67,7 @@ export default function AITrafficAnalyzer() {
   };
 
   return (
-    <div>
+    <div data-full-ai-workspace="AITrafficAnalyzer"><FullAIExamples controller={fullAIExamples} disabled={Boolean(loading)} />
       <div className="page-header">
         <div>
           <h1>AI Traffic Analyzer</h1>
@@ -85,7 +89,7 @@ export default function AITrafficAnalyzer() {
             rows={5}
             placeholder="Enter traffic data, patterns, or describe the traffic scenario you want to analyze..."
             value={input}
-            onChange={(e) => setInput(e.target.value)}
+            onChange={(e) => setInput(e.target.value)} data-full-ai-field={fullAIExamples.bind({ current: input, change: (e) => setInput(e.target.value), label: "input", manual: false, json: false, sample: '' }, "p1-3709", undefined)}
           />
         </div>
         <button className="btn btn-primary" onClick={handleAnalyze} disabled={loading || !input.trim()}>

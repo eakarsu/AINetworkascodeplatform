@@ -1,3 +1,5 @@
+
+import FullAIExamples, { useFullAIExamples } from "../components/FullAIExamples.jsx";
 import React, { useState } from 'react';
 import { FiShield, FiZap } from 'react-icons/fi';
 import AIResultDisplay from '../components/AIResultDisplay';
@@ -16,6 +18,8 @@ const samples = [
 ];
 
 export default function AISecurityThreat() {
+  const fullAIExamples = useFullAIExamples();
+
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState(null);
@@ -39,7 +43,7 @@ export default function AISecurityThreat() {
   };
 
   return (
-    <div>
+    <div data-full-ai-workspace="AISecurityThreat"><FullAIExamples controller={fullAIExamples} disabled={Boolean(loading)} />
       <div className="page-header">
         <div>
           <h1>AI Security Threat Detector</h1>
@@ -55,7 +59,7 @@ export default function AISecurityThreat() {
         <div className="form-group">
 
           <textarea className="form-control" rows={6} placeholder="Paste network events, auth logs, traffic anomalies..."
-            value={input} onChange={e => setInput(e.target.value)} />
+            value={input} onChange={e => setInput(e.target.value)} data-full-ai-field={fullAIExamples.bind({ current: input, change: e => setInput(e.target.value), label: "input", manual: false, json: false, sample: '' }, "p1-1997", undefined)} />
         </div>
         <button className="btn btn-primary" onClick={run} disabled={loading || !input.trim()}>
           {loading ? <><div className="spinner" style={{ width: 16, height: 16, borderWidth: 2 }} /> Analyzing...</> :

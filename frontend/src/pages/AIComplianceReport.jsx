@@ -17,20 +17,28 @@ export default function AIComplianceReport() {
   const sampleRequests = [
       {
           "label": "Scenario",
+          "periodDays": 30,
+          "frameworks": ['SLA', 'GDPR', 'NIS2'],
           "value": "Run AI Compliance Report for a realistic customer case.\nContext: a team needs a practical recommendation based on incomplete operating data.\nGoal: identify the best action, key risks, missing information, and expected business impact.\nReturn: summary, prioritized action plan, assumptions, and follow-up questions."
       },
       {
           "label": "Data sample",
+          "periodDays": 90,
+          "frameworks": ['SLA', 'ISO27001'],
           "value": "Analyze this AI Compliance Report data sample.\nInput records:\n- Record 1: urgent, customer impact high, owner unassigned\n- Record 2: medium priority, blocked by missing data\n- Record 3: recurring issue, automation opportunity\nReturn structured findings, anomalies, recommendations, and confidence."
       },
       {
           "label": "Executive review",
+          "periodDays": 180,
+          "frameworks": ['SLA', 'GDPR', 'NIS2', 'ISO27001', 'PCI-DSS'],
           "value": "Prepare an executive review for AI Compliance Report.\nAudience: business owner, operations lead, and implementation team.\nInclude impact, risk, estimated effort, decision points, and a concise next-step plan."
       }
   ];
 
-  const applySampleRequest = (value) => {
-    setInput(value);
+  const applySampleRequest = (sample) => {
+    setInput(sample.value);
+    setPeriodDays(sample.periodDays);
+    setFrameworks(sample.frameworks);
     setError(null);
     setResult(null);
   };
@@ -89,7 +97,7 @@ export default function AIComplianceReport() {
             <button
               key={sample.label}
               type="button"
-              onClick={() => applySampleRequest(sample.value)}
+              onClick={() => applySampleRequest(sample)}
               style={{ padding: '6px 10px', background: '#eef2ff', color: '#1e3a8a', border: '1px solid #c7d2fe', borderRadius: 6, cursor: 'pointer', fontSize: 12, fontWeight: 600 }}
             >
               {sample.label}

@@ -1,3 +1,5 @@
+
+import FullAIExamples, { useFullAIExamples } from "../components/FullAIExamples.jsx";
 import React, { useState } from 'react';
 import { FiCpu, FiZap } from 'react-icons/fi';
 import AIResultDisplay from '../components/AIResultDisplay';
@@ -10,6 +12,8 @@ const samples = [
 ];
 
 export default function AIAutomatedProvisioning() {
+  const fullAIExamples = useFullAIExamples();
+
   const [intent, setIntent] = useState('');
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState(null);
@@ -36,7 +40,7 @@ export default function AIAutomatedProvisioning() {
   };
 
   return (
-    <div>
+    <div data-full-ai-workspace="AIAutomatedProvisioning"><FullAIExamples controller={fullAIExamples} disabled={Boolean(loading)} />
       <div className="page-header">
         <div>
           <h1>AI Automated Provisioning</h1>
@@ -50,7 +54,7 @@ export default function AIAutomatedProvisioning() {
           {samples.map((s, i) => (<button key={i} onClick={() => setIntent(s.text)}>{s.label}</button>))}
         </div>
         <div className="form-group">
-          <textarea className="form-control" rows={6} placeholder="Describe the desired network state, SLAs, devices, and timing..." value={intent} onChange={e => setIntent(e.target.value)} />
+          <textarea className="form-control" rows={6} placeholder="Describe the desired network state, SLAs, devices, and timing..." value={intent} onChange={e => setIntent(e.target.value)} data-full-ai-field={fullAIExamples.bind({ current: intent, change: e => setIntent(e.target.value), label: "intent", manual: false, json: false, sample: '' }, "p1-2181", undefined)} />
         </div>
         <button className="btn btn-primary" onClick={run} disabled={loading || !intent.trim()}>
           {loading ? <><div className="spinner" style={{ width: 16, height: 16, borderWidth: 2 }} /> Planning...</> : <><FiZap /> Generate Plan</>}

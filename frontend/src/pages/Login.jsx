@@ -32,8 +32,15 @@ export default function Login() {
   };
 
   const handleDemoLogin = () => {
-    setEmail(import.meta.env.VITE_DEMO_EMAIL || '');
-    setPassword(import.meta.env.VITE_DEMO_PASSWORD || '');
+    const demoEmail = import.meta.env.VITE_DEMO_EMAIL;
+    const demoPassword = import.meta.env.VITE_DEMO_PASSWORD;
+    if (!demoEmail || !demoPassword) {
+      setError('Demo credentials are not configured for this browser. Ask an administrator for access.');
+      return;
+    }
+    setError('');
+    setEmail(demoEmail);
+    setPassword(demoPassword);
   };
 
   return (
@@ -85,8 +92,8 @@ export default function Login() {
 
         <div className="login-divider">or</div>
 
-        <button className="btn btn-demo" onClick={handleDemoLogin}>
-          <FiZap /> Auto Fill Demo Credentials
+        <button type="button" className="btn btn-demo" onClick={handleDemoLogin}>
+          <FiZap /> Fill Demo Credentials
         </button>
       </div>
     </div>

@@ -72,7 +72,12 @@ export default function Dashboard() {
     const fetchCounts = async () => {
       const allItems = features.flatMap(s => s.items).filter(f => f.api);
       const results = await Promise.all(
-        allItems.map(f => API(f.api).then(data => ({ key: f.key, count: Array.isArray(data) ? data.length : 0 })))
+        allItems.map(f => API(f.api).then(data => ({
+          key: f.key,
+          count: Number.isFinite(Number(data?.pagination?.total))
+            ? Number(data.pagination.total)
+            : Array.isArray(data?.data) ? data.data.length : Array.isArray(data) ? data.length : 0,
+        })))
       );
       const map = {};
       results.forEach(r => { map[r.key] = r.count; });

@@ -1,3 +1,5 @@
+
+import FullAIExamples, { useFullAIExamples } from "../components/FullAIExamples.jsx";
 import React, { useState, useEffect } from 'react';
 import { FiAlertTriangle, FiZap, FiClock } from 'react-icons/fi';
 import AIResultDisplay from '../components/AIResultDisplay';
@@ -26,6 +28,8 @@ const sampleInputs = [
 ];
 
 export default function AIAnomalyDetector() {
+  const fullAIExamples = useFullAIExamples();
+
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState(null);
@@ -63,7 +67,7 @@ export default function AIAnomalyDetector() {
   };
 
   return (
-    <div>
+    <div data-full-ai-workspace="AIAnomalyDetector"><FullAIExamples controller={fullAIExamples} disabled={Boolean(loading)} />
       <div className="page-header">
         <div>
           <h1>AI Anomaly Detector</h1>
@@ -85,7 +89,7 @@ export default function AIAnomalyDetector() {
             rows={5}
             placeholder="Enter network metrics, describe unusual behavior, or paste monitoring data for anomaly detection..."
             value={input}
-            onChange={(e) => setInput(e.target.value)}
+            onChange={(e) => setInput(e.target.value)} data-full-ai-field={fullAIExamples.bind({ current: input, change: (e) => setInput(e.target.value), label: "input", manual: false, json: false, sample: '' }, "p1-3997", undefined)}
           />
         </div>
         <button className="btn btn-primary" onClick={handleAnalyze} disabled={loading || !input.trim()}>

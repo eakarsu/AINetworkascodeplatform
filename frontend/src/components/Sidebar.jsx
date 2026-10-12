@@ -1,3 +1,4 @@
+import AIReportLibrary from "./AIReportLibrary";
 import React from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import {
@@ -139,6 +140,6 @@ export default function Sidebar() {
           <FiLogOut /> Sign Out
         </button>
       </div>
-    </aside>
+    <AIReportLibrary /></aside>
   );
 }

@@ -1,3 +1,5 @@
+
+import FullAIExamples, { useFullAIExamples } from "../components/FullAIExamples.jsx";
 import React, { useState } from 'react';
 import { FiLayers, FiZap } from 'react-icons/fi';
 import AIResultDisplay from '../components/AIResultDisplay';
@@ -18,6 +20,8 @@ const samples = [
 ];
 
 export default function AINetworkSliceOptimizer() {
+  const fullAIExamples = useFullAIExamples();
+
   const [input, setInput] = useState('');
   const [sliceType, setSliceType] = useState('mixed');
   const [loading, setLoading] = useState(false);
@@ -46,7 +50,7 @@ export default function AINetworkSliceOptimizer() {
   };
 
   return (
-    <div>
+    <div data-full-ai-workspace="AINetworkSliceOptimizer"><FullAIExamples controller={fullAIExamples} disabled={Boolean(loading)} />
       <div className="page-header">
         <div>
           <h1>AI Network Slice Optimizer</h1>
@@ -63,7 +67,7 @@ export default function AINetworkSliceOptimizer() {
         </div>
         <div className="form-group">
           <label>Slice Type Focus</label>
-          <select className="form-control" value={sliceType} onChange={e => setSliceType(e.target.value)} style={{ maxWidth: 200 }}>
+          <select className="form-control" value={sliceType} onChange={e => setSliceType(e.target.value)} style={{ maxWidth: 200 }} data-full-ai-field={fullAIExamples.bind({ current: sliceType, change: e => setSliceType(e.target.value), label: "sliceType", manual: false, json: false, sample: 'mixed' }, "p1-2594", undefined)}>
             <option value="mixed">Mixed</option>
             <option value="eMBB">eMBB</option>
             <option value="URLLC">URLLC</option>
@@ -73,7 +77,7 @@ export default function AINetworkSliceOptimizer() {
         <div className="form-group">
 
           <textarea className="form-control" rows={6} placeholder="Paste slice configuration, QoS targets, and observed metrics..."
-            value={input} onChange={e => setInput(e.target.value)} />
+            value={input} onChange={e => setInput(e.target.value)} data-full-ai-field={fullAIExamples.bind({ current: input, change: e => setInput(e.target.value), label: "input", manual: false, json: false, sample: '' }, "p1-2992", undefined)} />
         </div>
         <button className="btn btn-primary" onClick={run} disabled={loading || !input.trim()}>
           {loading ? <><div className="spinner" style={{ width: 16, height: 16, borderWidth: 2 }} /> Optimizing...</> :

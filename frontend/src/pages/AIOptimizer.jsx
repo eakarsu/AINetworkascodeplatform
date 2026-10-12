@@ -1,3 +1,5 @@
+
+import FullAIExamples, { useFullAIExamples } from "../components/FullAIExamples.jsx";
 import React, { useState, useEffect } from 'react';
 import { FiCpu, FiZap, FiClock, FiCheck, FiRotateCcw, FiChevronRight, FiChevronDown } from 'react-icons/fi';
 import AIResultDisplay from '../components/AIResultDisplay';
@@ -140,6 +142,8 @@ function OptimizationHistoryItem({ item, onApply, onRollback }) {
 }
 
 export default function AIOptimizer() {
+  const fullAIExamples = useFullAIExamples();
+
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState(null);
@@ -183,7 +187,7 @@ export default function AIOptimizer() {
   };
 
   return (
-    <div>
+    <div data-full-ai-workspace="AIOptimizer"><FullAIExamples controller={fullAIExamples} disabled={Boolean(loading)} />
       <div className="page-header">
         <div>
           <h1>AI Network Optimizer</h1>
@@ -205,7 +209,7 @@ export default function AIOptimizer() {
             rows={5}
             placeholder="Describe your network configuration, current metrics, or optimization goals..."
             value={input}
-            onChange={(e) => setInput(e.target.value)}
+            onChange={(e) => setInput(e.target.value)} data-full-ai-field={fullAIExamples.bind({ current: input, change: (e) => setInput(e.target.value), label: "input", manual: false, json: false, sample: '' }, "p1-9112", undefined)}
           />
         </div>
         <button className="btn btn-primary" onClick={handleAnalyze} disabled={loading || !input.trim()}>
