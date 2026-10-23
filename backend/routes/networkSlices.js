@@ -11,9 +11,14 @@ router.get('/', async (req, res) => {
     const page = Math.max(1, parseInt(req.query.page) || 1);
     const limit = Math.min(100, Math.max(1, parseInt(req.query.limit) || 20));
     const offset = (page - 1) * limit;
-    const countResult = await pool.query('SELECT COUNT(*) FROM network_slices');
+    const q = String(req.query.q || req.query.search || '').trim(); const clauses = []; const params = [];
+    if (q) { params.push(`%${q}%`); clauses.push(`(name ILIKE $1 OR type ILIKE $1 OR description ILIKE $1)`); }
+    if (req.query.status) { params.push(req.query.status); clauses.push(`status = $${params.length}`); }
+    if (req.query.type) { params.push(req.query.type); clauses.push(`type = $${params.length}`); }
+    const where = clauses.length ? ` WHERE ${clauses.join(' AND ')}` : '';
+    const countResult = await pool.query(`SELECT COUNT(*) FROM network_slices${where}`, params);
     const total = parseInt(countResult.rows[0].count);
-    const result = await pool.query('SELECT * FROM network_slices ORDER BY created_at DESC LIMIT $1 OFFSET $2', [limit, offset]);
+    const result = await pool.query(`SELECT * FROM network_slices${where} ORDER BY created_at DESC LIMIT $${params.length + 1} OFFSET $${params.length + 2}`, [...params, limit, offset]);
     res.json({ data: result.rows, pagination: { page, limit, total, totalPages: Math.ceil(total / limit) } });
   } catch (err) {
     console.error('Error fetching network slices:', err);

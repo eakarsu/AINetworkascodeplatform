@@ -66,6 +66,7 @@ app.use('/api/anomaly-rules', require('./routes/anomalyRules'));
 
 // Custom Views (4 features: 2 viz + 2 non-viz) — mounted BEFORE 404 / error handler
 app.use('/api/custom-views', require('./routes/customViews'));
+app.use('/api/fp', require('./routes/fpWave40')({ auth: require('./middleware/auth') }));
 app.use('/api/governed-network-runs',governanceRouter);
 
 // Global error handler
